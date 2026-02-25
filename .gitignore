@@ -1,0 +1,34 @@
+# Vivado generated files
+**/*.jou
+**/*.log
+**/*.str
+**/*.debug
+
+# Project directories
+**/*.cache/
+**/*.hw/
+**/*.ip_user_files/
+**/*.runs/
+**/*.sim/
+**/*.tmp/
+**/*.gen/
+
+# Bitstream and implementation outputs
+**/*.bit
+**/*.ltx
+**/*.mcs
+
+# IP generated files (keep .xci)
+**/*_stub.v
+**/*_stub.vhdl
+**/*_funcsim.v
+**/*_funcsim.vhdl
+
+# Vivado backup files
+**/*.bak
+**/*.backup.jou
+**/*.backup.log
+
+# OS files
+.DS_Store
+Thumbs.db
