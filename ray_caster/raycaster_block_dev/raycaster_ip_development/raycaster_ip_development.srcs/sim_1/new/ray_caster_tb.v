@@ -26,22 +26,11 @@ reg clk;
 reg rst;
 reg start_pulse;
 
-reg [15:0] dir_x; // cos(a)
-reg [15:0] dir_y;  // sin(a)
-
-reg [15:0] plane_x; // the plane vector is the dir vector rotated 90' anticlockwise
-reg [15:0] plane_y;
-
-reg [15:0] pos_x; //Q6.10 unsigned
-reg [15:0] pos_y;
 
 
 wire last_h;
 
-wire [4:0] cell_check_x;
-wire [4:0] cell_check_y;
 
-reg cell_status; //from bram
 
 wire [15:0] distance;
 wire ray_done;
@@ -53,15 +42,18 @@ wire last_pixel;
 
 wire [15:0] v_dir_x_r;
 
+wire [15:0] bram_search_address;
+reg [31:0] bram_data;
 
 
 
-reg [31:0] test_map [0:31];
+
+reg [31:0] test_map [0:33];
 
 initial $readmemh("test_map.mem", test_map);
 
 always @(posedge clk) begin
-    cell_status <= test_map[cell_check_y][cell_check_x];
+    bram_data <= test_map[bram_search_address];
 end
 
 initial begin
@@ -122,14 +114,7 @@ end
 initial begin 
     rst = 1;
     start_pulse = 0;
-    dir_x = 16'h2D41; //Q2.14
-    dir_y = 16'h2D41;
-    
-    plane_x = 16'b1110000000000000; 
-    plane_y = 16'b0011011101101100;
-    
-    pos_x = 16'hD2BF; // Q6.10
-    pos_y = 16'h2D41;
+
     #10;
     start_pulse = 1;
     rst = 0;
@@ -138,16 +123,23 @@ initial begin
     @(posedge frame);
     #200; 
     
-    dir_x = 16'h4000;
-    dir_y = 16'h0000;
-    plane_x = 16'h0000; 
-    plane_y = 16'h4000;
+
     
     @(posedge frame);
     #200;
     
-    pos_x = 16'h2000; // Q6.10
-    pos_y = 16'h4000;
+        @(posedge frame);
+    #200;
+    
+        @(posedge frame);
+    #200;
+    
+        @(posedge frame);
+    #200;
+    
+        @(posedge frame);
+    #200;
+
     
     
     
@@ -157,11 +149,20 @@ initial begin
 end
 
 
+
+
 ray_caster dut (
 .clk(clk),
 .rst(rst),
 .start_pulse(start_pulse),
 
+
+.addr(bram_search_address),
+.bram_data(bram_data),
+
+
+
+/*
 .dir_x(dir_x), // cos(a)
 .dir_y(dir_y),  // sin(a)
 
@@ -170,13 +171,14 @@ ray_caster dut (
 
 .pos_x(pos_x), //Q6.10 unsigned
 .pos_y(pos_y),
+*/
 
 .last_h(last_h),
 
-.cell_check_x(cell_check_x),
+/*.cell_check_x(cell_check_x),
 .cell_check_y(cell_check_y),
 
-.cell_status(cell_status), //from bram
+.cell_status(cell_status), //from bram */
 
 .distance(distance),
 .ray_done(ray_done),
@@ -233,7 +235,7 @@ ray_caster dut (
    
 );
 
-
+// resim as bram only - no dir - pos etc etc etc !!!!!!
 
 
 endmodule

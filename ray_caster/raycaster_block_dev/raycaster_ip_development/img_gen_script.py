@@ -15,7 +15,7 @@ colour_map = {
 
 frame_size = 720 * 720
 
-for frame_num in range(4):
+for frame_num in range(8):
     frame_pixels = pixels[frame_num * frame_size : (frame_num + 1) * frame_size]
     if len(frame_pixels) < frame_size:
         print(f"Frame {frame_num + 1}: not enough pixels ({len(frame_pixels)}), skipping")

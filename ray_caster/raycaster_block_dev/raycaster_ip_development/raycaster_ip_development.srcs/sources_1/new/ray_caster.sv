@@ -50,7 +50,6 @@ output reg last_h,
 output wire [4:0] cell_check_x,
 output wire [4:0] cell_check_y,
 
-input cell_status, //from bram
 
 output wire [15:0] distance,
 output wire ray_done,
@@ -62,6 +61,12 @@ output wire [1:0] pxl_val,
 output wire frame,
 output wire start_line,
 output wire last_pixel,
+
+//bram
+
+output wire [15:0] addr,
+
+input [31:0] bram_data,
 
 
 
@@ -105,7 +110,7 @@ output wire last_pixel,
 );
 
 
-    
+    reg [4:0] cell_check_x_d;
 
     reg [dwidth-1:0] raydir_x;
     reg [dwidth-1:0] raydir_y;
@@ -164,6 +169,14 @@ output wire last_pixel,
     assign pos_side_distx_multiply = (map_x + {1'b1,10'h0} - pos_x_r) * deltadistx;
     assign neg_side_disty_multiply = (pos_y_r-map_y) * (deltadisty);
     assign pos_side_disty_multiply = (map_y + {1'b1,10'h0} - pos_y_r) * deltadisty;
+    
+    
+// bram controller
+reg [1:0] load_from_bram; //11 load angle, 10 load position
+reg load_stage;
+    
+    
+assign addr = load_stage ? ( (load_from_bram == 2'b11) ? 16'h0021: 16'h0020) : {11'h0,cell_check_y};
     
 // three cycles: (1) update i, (2) update raydir, (3) BRAM output valid ? latch step/sidedist + assert dda_start
     
@@ -229,6 +242,23 @@ assign v_dda_start = dda_start;
 
        wire start_frame_internal = start_pulse | last_pixel;  
     
+wire [15:0] dir_wire_x;
+wire [15:0] dir_wire_y;
+wire [15:0] plane_wire_x;
+wire [15:0] plane_wire_y;
+
+
+dir_vectors dir_v_lookup(
+.clk,
+.angle_in(bram_data[11:0]), //12 bits
+.dir_x(dir_wire_x),
+.dir_y(dir_wire_y),
+.plane_x(plane_wire_x),
+.plane_y(plane_wire_y)
+);    
+    
+    
+    
     always @(posedge clk) begin
         if(rst) begin
             frame_in_progress <= 1'b0;
@@ -240,6 +270,49 @@ assign v_dda_start = dda_start;
             new_ray_dd <= 1'b0;   
             new_ray_ddd <= 1'b0; 
             vert_height_valid <= 1'b0;  
+            load_from_bram <= 2'b00;
+            load_stage <= 1'b0;
+        end
+        else if(load_stage) begin
+            if(load_from_bram == 2'b11) begin
+                load_from_bram <= 2'b10; 
+                //looking up angle
+            end
+            else if(load_from_bram == 2'b10) begin
+                //lookup from vector generater from the read angle
+                
+                //looking up positions
+                load_from_bram <= 2'b01;
+            end
+            else if(load_from_bram == 2'b01) begin
+                //load the returned dir and plane vectors from the vector modules
+                pos_x_r   <= bram_data[31:16];
+                pos_y_r   <= bram_data[15:0];
+                
+                
+                 dir_x_r   <= dir_wire_x;
+                 dir_y_r   <= dir_wire_y;
+                  plane_x_r <= plane_wire_x;
+                   plane_y_r <=plane_wire_y;
+                    
+                            
+                frame_in_progress <= 1'b1;
+                start <= 1'b1;
+                new_ray <= 1'b1;
+                
+                load_from_bram <= 2'b00;
+                load_stage <= 1'b0;
+                
+                
+                /*dir_x_r   <= dir_x;
+                dir_y_r   <= dir_y;
+                plane_x_r <= plane_x;
+                plane_y_r <= plane_y;
+                pos_x_r   <= pos_x;
+                pos_y_r   <= pos_y; */
+                
+            end
+            
         end
         else begin
         
@@ -255,17 +328,12 @@ assign v_dda_start = dda_start;
                 dda_start <= 1'b0;
             end
             
+            
         
             if(start_frame_internal & ~frame_in_progress) begin
-                frame_in_progress <= 1'b1;
-                start <= 1'b1;
-                new_ray <= 1'b1;
-                dir_x_r   <= dir_x;
-                dir_y_r   <= dir_y;
-                plane_x_r <= plane_x;
-                plane_y_r <= plane_y;
-                pos_x_r   <= pos_x;
-                pos_y_r   <= pos_y;
+                load_stage <= 1'b1;
+                load_from_bram <= 2'b11;
+            
             end
             else if (last_h) begin
                 frame_in_progress <= 1'b0;
@@ -332,6 +400,15 @@ assign v_dda_start = dda_start;
     wire side_wire;
     reg side;
     
+    always @(posedge clk) begin
+        cell_check_x_d <= cell_check_x;
+    end
+    
+    
+    wire cell_status;
+    assign cell_status = bram_data[cell_check_x_d];
+    
+    
     dda_main_body dda (
         .clk(clk),
         .start(dda_start),
@@ -377,7 +454,7 @@ assign v_dda_start = dda_start;
 
     
     
-    
+
     
     // hdmi output
     
