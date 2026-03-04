@@ -36,19 +36,8 @@ input clk,
 input rst,
 input start_pulse,
 
-input [dwidth-1:0] dir_x, // cos(a)
-input [dwidth-1:0] dir_y,  // sin(a)
-
-input [dwidth-1:0] plane_x, // the plane vector is the dir vector rotated 90' anticlockwise
-input [dwidth-1:0] plane_y,
-
-input [dwidth-1:0] pos_x, //Q6.10 unsigned
-input [dwidth-1:0] pos_y,
-
 output reg last_h,
 
-output wire [4:0] cell_check_x,
-output wire [4:0] cell_check_y,
 
 
 output wire [15:0] distance,
@@ -109,6 +98,8 @@ input [31:0] bram_data,
   
 );
 
+    wire [4:0] cell_check_x;
+    wire [4:0] cell_check_y;
 
     reg [4:0] cell_check_x_d;
 
@@ -294,7 +285,12 @@ dir_vectors dir_v_lookup(
                  dir_y_r   <= dir_wire_y;
                   plane_x_r <= plane_wire_x;
                    plane_y_r <=plane_wire_y;
-                    
+                   
+                   
+                       new_ray_d   <= 1'b0;
+                new_ray_dd  <= 1'b0;
+                new_ray_ddd <= 1'b0;
+                                
                             
                 frame_in_progress <= 1'b1;
                 start <= 1'b1;
@@ -335,16 +331,17 @@ dir_vectors dir_v_lookup(
                 load_from_bram <= 2'b11;
             
             end
-            else if (last_h) begin
-                frame_in_progress <= 1'b0;
-                last_h <= 1'b0;
-            end
+
             
             if(start) begin
                 start <= 1'b0; // these dont offer race conditions because they can only occur when frame_in_progress = 1
             end
             if(new_ray) begin
                 new_ray <= 1'b0;
+            end
+            
+            if (last_h) begin
+                frame_in_progress <= 1'b0;
             end
             
             if(ray_done) begin
@@ -367,6 +364,13 @@ dir_vectors dir_v_lookup(
     
     
     always @(posedge clk) begin
+            if (last_h) begin
+                last_h <= 1'b0;
+            end
+        
+        
+        
+        
         if(new_ray) begin    
         
             //rays might sweep from right to left - check out later    
@@ -468,8 +472,8 @@ dir_vectors dir_v_lookup(
     .side_in(side),
     
     .pxl_val(pxl_val),
-    .frame(frame),
-    .start_line(start_line),
+    .frame_d(frame),
+    .start_line_d(start_line),
     .last_pixel(last_pixel)
     
     

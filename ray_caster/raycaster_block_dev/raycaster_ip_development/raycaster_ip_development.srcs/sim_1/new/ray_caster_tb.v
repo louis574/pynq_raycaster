@@ -105,8 +105,9 @@ integer f;
 initial f = $fopen("frame.csv", "w");
 
 always @(posedge clk) begin
-    if(frame) begin  // or use your frame/de signal
+    if(frame) begin  //
         $fwrite(f, "%0d\n", pxl_val);
+
     end
 end
 
@@ -120,30 +121,15 @@ initial begin
     rst = 0;
     #15;
     start_pulse = 0;
-    @(posedge frame);
-    #200; 
     
 
+    #5200000
     
-    @(posedge frame);
-    #200;
-    
-        @(posedge frame);
-    #200;
-    
-        @(posedge frame);
-    #200;
-    
-        @(posedge frame);
-    #200;
-    
-        @(posedge frame);
-    #200;
-
+    $readmemh("test_map1.mem", test_map);
     
     
     
-    #18000000;
+    #42000000;
     $fclose(f);
     $finish;
 end

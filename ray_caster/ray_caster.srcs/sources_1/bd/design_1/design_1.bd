@@ -7,8 +7,7 @@
       "name": "design_1",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2020.2",
-      "validated": "true"
+      "tool_version": "2020.2"
     },
     "design_tree": {
       "blk_mem_gen_0": "",
@@ -16,72 +15,16 @@
       "axi_bram_ctrl_0": "",
       "axi_smc": "",
       "rst_ps7_0_50M": "",
-      "top_0": ""
+      "ray_caster_0": ""
     },
     "interface_ports": {
       "DDR": {
         "mode": "Master",
-        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0",
-        "parameters": {
-          "AXI_ARBITRATION_SCHEME": {
-            "value": "TDM",
-            "value_src": "default"
-          },
-          "BURST_LENGTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "CAN_DEBUG": {
-            "value": "false",
-            "value_src": "default"
-          },
-          "CAS_LATENCY": {
-            "value": "11",
-            "value_src": "default"
-          },
-          "CAS_WRITE_LATENCY": {
-            "value": "11",
-            "value_src": "default"
-          },
-          "CS_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "DATA_MASK_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "DATA_WIDTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "MEMORY_TYPE": {
-            "value": "COMPONENTS",
-            "value_src": "default"
-          },
-          "MEM_ADDR_MAP": {
-            "value": "ROW_COLUMN_BANK",
-            "value_src": "default"
-          },
-          "SLOT": {
-            "value": "Single",
-            "value_src": "default"
-          },
-          "TIMEPERIOD_PS": {
-            "value": "1250",
-            "value_src": "default"
-          }
-        }
+        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0"
       },
       "FIXED_IO": {
         "mode": "Master",
-        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0",
-        "parameters": {
-          "CAN_DEBUG": {
-            "value": "false",
-            "value_src": "default"
-          }
-        }
+        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0"
       }
     },
     "components": {
@@ -374,24 +317,24 @@
         "xci_path": "ip\\design_1_rst_ps7_0_50M_0\\design_1_rst_ps7_0_50M_0.xci",
         "inst_hier_path": "rst_ps7_0_50M"
       },
-      "top_0": {
-        "vlnv": "xilinx.com:user:top:1.0",
-        "xci_name": "design_1_top_0_0",
-        "xci_path": "ip\\design_1_top_0_0\\design_1_top_0_0.xci",
-        "inst_hier_path": "top_0"
+      "ray_caster_0": {
+        "vlnv": "xilinx.com:user:ray_caster:1.0",
+        "xci_name": "design_1_ray_caster_0_0",
+        "xci_path": "ip\\design_1_ray_caster_0_0\\design_1_ray_caster_0_0.xci",
+        "inst_hier_path": "ray_caster_0"
       }
     },
     "interface_nets": {
+      "processing_system7_0_M_AXI_GP0": {
+        "interface_ports": [
+          "processing_system7_0/M_AXI_GP0",
+          "axi_smc/S00_AXI"
+        ]
+      },
       "processing_system7_0_FIXED_IO": {
         "interface_ports": [
           "FIXED_IO",
           "processing_system7_0/FIXED_IO"
-        ]
-      },
-      "axi_smc_M00_AXI": {
-        "interface_ports": [
-          "axi_smc/M00_AXI",
-          "axi_bram_ctrl_0/S_AXI"
         ]
       },
       "axi_bram_ctrl_0_BRAM_PORTA": {
@@ -406,10 +349,10 @@
           "processing_system7_0/DDR"
         ]
       },
-      "processing_system7_0_M_AXI_GP0": {
+      "axi_smc_M00_AXI": {
         "interface_ports": [
-          "processing_system7_0/M_AXI_GP0",
-          "axi_smc/S00_AXI"
+          "axi_smc/M00_AXI",
+          "axi_bram_ctrl_0/S_AXI"
         ]
       }
     },
@@ -421,7 +364,8 @@
           "axi_smc/aclk",
           "axi_bram_ctrl_0/s_axi_aclk",
           "rst_ps7_0_50M/slowest_sync_clk",
-          "top_0/clk"
+          "ray_caster_0/clk",
+          "blk_mem_gen_0/clkb"
         ]
       },
       "processing_system7_0_FCLK_RESET0_N": {
@@ -437,46 +381,16 @@
           "axi_smc/aresetn"
         ]
       },
-      "top_0_radd": {
+      "rst_ps7_0_50M_interconnect_aresetn": {
         "ports": [
-          "top_0/radd",
-          "blk_mem_gen_0/addrb"
-        ]
-      },
-      "top_0_bclk": {
-        "ports": [
-          "top_0/bclk",
-          "blk_mem_gen_0/clkb"
-        ]
-      },
-      "top_0_enb": {
-        "ports": [
-          "top_0/enb",
-          "blk_mem_gen_0/enb"
-        ]
-      },
-      "top_0_rstb": {
-        "ports": [
-          "top_0/rstb",
-          "blk_mem_gen_0/rstb"
-        ]
-      },
-      "top_0_bwen": {
-        "ports": [
-          "top_0/bwen",
-          "blk_mem_gen_0/web"
-        ]
-      },
-      "top_0_bwrite_d": {
-        "ports": [
-          "top_0/bwrite_d",
-          "blk_mem_gen_0/dinb"
+          "rst_ps7_0_50M/interconnect_aresetn",
+          "ray_caster_0/rst"
         ]
       },
       "blk_mem_gen_0_doutb": {
         "ports": [
           "blk_mem_gen_0/doutb",
-          "top_0/bread_d"
+          "ray_caster_0/bram_data"
         ]
       }
     },

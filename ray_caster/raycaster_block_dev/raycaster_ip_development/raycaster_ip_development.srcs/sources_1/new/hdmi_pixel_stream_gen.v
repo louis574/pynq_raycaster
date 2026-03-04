@@ -32,13 +32,16 @@ input [15:0] ray_no,
 input last_h,
 
 output wire [1:0] pxl_val, //00 white, 01 grey, 10 green, 11 blue
-output wire frame,
-output reg start_line,
+output reg frame_d,
+output reg start_line_d,
 output reg last_pixel
 
  
 
     );
+    
+wire frame;
+reg start_line;
     
 reg [8:0] next_heights [0:719];
 reg [8:0] current_heights [0:719];
@@ -59,19 +62,36 @@ integer i;
 wire [8:0] half_height_read;
 
 wire strip_side;
+// new
+reg [1:0] pxl_val_r;
+assign pxl_val = pxl_val_r;
+
+wire in_wall = (y_coord >= (10'd360 - {1'b0, half_height_read}) && 
+                y_coord <= (10'd360 + {1'b0, half_height_read}));
+
+always @(posedge clk) begin
+    pxl_val_r <= in_wall ? 
+                 (strip_side ? 2'b01 : 2'b00) :
+                 ((y_coord >= 10'd360) ? 2'b10 : 2'b11);
+end
+
+
+//
 
 assign frame = in_frame;
 
 assign half_height_read = current_heights[x_coord];
 assign strip_side = current_side[x_coord];
 
-wire in_wall = (y_coord >= (10'd360 - {1'b0, half_height_read}) && 
-                y_coord <= (10'd360 + {1'b0, half_height_read}));
 
+
+
+
+/*
 assign pxl_val = in_wall ? (strip_side ? 2'b01 : 2'b00) : (
                  (y_coord >= 10'd360) ? 2'b10: 2'b11);
 
-
+*/
 always @(posedge clk) begin
     if(rst) begin
         start_line <= 1'b0;
@@ -81,15 +101,24 @@ always @(posedge clk) begin
         y_coord <= 10'h0;
         stream_started <= 1'b0;
         frame_gap <= 1'b0;
+        frame_d <= 1'b0;
+        start_line_d <= 1'b0;
     end
     
     else if (last_pixel) begin
         last_pixel <= 1'b0;
         in_frame <= 1'b0;
         frame_gap <= 1'b1;
+        
+        frame_d <= frame;
+        start_line_d <= start_line;
     end
     
     else begin
+    
+        frame_d <= frame;
+        start_line_d <= start_line;
+    
         if(vert_height_valid) begin
             next_heights[ray_no] <= vert_half_height;
             next_side[ray_no] <= side_in; 
@@ -124,7 +153,10 @@ always @(posedge clk) begin
                 start_line <= 1'b0;
             end
             if(x_coord == 10'd719 && y_coord == 10'd719) begin
+                in_frame <= 1'b0;
                 last_pixel <= 1'b1;
+                x_coord <= 10'h0;
+                y_coord <= 10'h0;
             end
             else if(x_coord == 10'd719) begin
                 x_coord <= 10'd0;
