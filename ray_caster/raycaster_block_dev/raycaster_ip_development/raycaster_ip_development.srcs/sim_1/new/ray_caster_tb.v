@@ -25,6 +25,7 @@ module ray_caster_tb;
 reg clk;
 reg rst;
 reg start_pulse;
+reg tready;
 
 
 
@@ -35,10 +36,12 @@ wire last_h;
 wire [15:0] distance;
 wire ray_done;
 
-wire [1:0] pxl_val;
+wire [23:0] pxl_val;
 wire frame;
 wire start_line;
 wire last_pixel;
+wire start_frame;
+wire tlast;
 
 wire [15:0] v_dir_x_r;
 
@@ -113,6 +116,7 @@ end
 
 
 initial begin 
+    tready = 0;
     rst = 1;
     start_pulse = 0;
 
@@ -140,6 +144,7 @@ end
 ray_caster dut (
 .clk(clk),
 .rst(rst),
+.tready(tready),
 .start_pulse(start_pulse),
 
 
@@ -176,6 +181,8 @@ ray_caster dut (
 .frame(frame),
 .start_line(start_line),
 .last_pixel(last_pixel),
+.start_frame(start_frame),
+.tlast(tlast),
 
 
 

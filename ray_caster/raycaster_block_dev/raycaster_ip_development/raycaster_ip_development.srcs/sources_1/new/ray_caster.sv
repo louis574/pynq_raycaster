@@ -21,8 +21,6 @@
 
 
 module ray_caster #(
-parameter SCREEN_HEIGHT = 480,
-parameter SCREEN_WIDTH = 720,
 parameter MAP_WIDTH = 32,
 parameter MAP_HEIGHT = 32,
 parameter COORD_SIZE = 32,
@@ -35,6 +33,7 @@ parameter fov = 90
 input clk,
 input rst,
 input start_pulse,
+input tready,
 
 output reg last_h,
 
@@ -46,10 +45,14 @@ output wire ray_done,
 output reg [8:0] vert_height, // 9 bits
 output reg vert_height_valid,
 
-output wire [1:0] pxl_val,
+output wire [23:0] pxl_val,
 output wire frame,
 output wire start_line,
 output wire last_pixel,
+
+output wire start_frame,
+
+output wire tlast,
 
 //bram
 
@@ -381,12 +384,12 @@ dir_vectors dir_v_lookup(
                 ray_no <= 16'b0;
                 last_h <= 1'b0;
             end
-            else if(ray_no == 16'd719) begin // this is the last ray
+            else if(ray_no == 16'd639) begin // this is the last ray
                 last_h <= 1'b1;
             end
             
             else begin
-                i <= i - 17'b00000000001011011; // approx 2/720 in our current q2.15 representation
+                i <= i - 17'b00000000001100110; // approx 2/640 in our current q2.15 representation
                 ray_no <= ray_no + 1'b1; // testing purposes - un-comment later
                 
 
@@ -465,6 +468,7 @@ dir_vectors dir_v_lookup(
     hdmi_pixel_stream_gen hdmi_control(
     .clk(clk),
     .rst(rst),
+    .tready(tready),
     .vert_half_height(vert_height),
     .vert_height_valid(vert_height_valid),
     .ray_no(completed_ray_no),
@@ -474,7 +478,9 @@ dir_vectors dir_v_lookup(
     .pxl_val(pxl_val),
     .frame_d(frame),
     .start_line_d(start_line),
-    .last_pixel(last_pixel)
+    .last_pixel(last_pixel),
+    .start_frame(start_frame),
+    .tlast(tlast)
     
     
     

@@ -6,6 +6,30 @@
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
+      <spirit:name>interface_axis</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TLAST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>tlast</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>tready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+    </spirit:busInterface>
+    <spirit:busInterface>
       <spirit:name>rst</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
@@ -38,6 +62,10 @@
       </spirit:portMaps>
       <spirit:parameters>
         <spirit:parameter>
+          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_BUSIF">interface_axis</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
           <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">rst</spirit:value>
         </spirit:parameter>
@@ -58,7 +86,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>870ba42d</spirit:value>
+            <spirit:value>95e493f5</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -74,7 +102,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>870ba42d</spirit:value>
+            <spirit:value>95e493f5</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -89,7 +117,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>84d423fb</spirit:value>
+            <spirit:value>4bc72b6f</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -103,7 +131,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>47b109ee</spirit:value>
+            <spirit:value>7d3d0fc9</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -146,6 +174,22 @@
               <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>tready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+          <spirit:driver>
+            <spirit:defaultValue spirit:format="long">1</spirit:defaultValue>
+          </spirit:driver>
         </spirit:wire>
       </spirit:port>
       <spirit:port>
@@ -226,7 +270,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:left spirit:format="long">23</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -266,6 +310,32 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>last_pixel</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>start_frame</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>tlast</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -631,16 +701,6 @@
     </spirit:ports>
     <spirit:modelParameters>
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
-        <spirit:name>SCREEN_HEIGHT</spirit:name>
-        <spirit:displayName>Screen Height</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.SCREEN_HEIGHT">480</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
-        <spirit:name>SCREEN_WIDTH</spirit:name>
-        <spirit:displayName>Screen Width</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.SCREEN_WIDTH">720</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>MAP_WIDTH</spirit:name>
         <spirit:displayName>Map Width</spirit:displayName>
         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.MAP_WIDTH">32</spirit:value>
@@ -716,7 +776,7 @@
       <spirit:file>
         <spirit:name>raycaster_ip_development.srcs/sources_1/new/ray_caster.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_963f5bac</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_9c116a00</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -781,23 +841,13 @@
       <spirit:file>
         <spirit:name>xgui/ray_caster_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_47b109ee</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_7d3d0fc9</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
   <spirit:description>ray_caster_v1_0</spirit:description>
   <spirit:parameters>
-    <spirit:parameter>
-      <spirit:name>SCREEN_HEIGHT</spirit:name>
-      <spirit:displayName>Screen Height</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.SCREEN_HEIGHT">480</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-      <spirit:name>SCREEN_WIDTH</spirit:name>
-      <spirit:displayName>Screen Width</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.SCREEN_WIDTH">720</spirit:value>
-    </spirit:parameter>
     <spirit:parameter>
       <spirit:name>MAP_WIDTH</spirit:name>
       <spirit:displayName>Map Width</spirit:displayName>
@@ -854,22 +904,22 @@
       <xilinx:displayName>ray_caster_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2026-03-04T21:44:57Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2026-03-06T18:47:31Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@7861ffe4_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@aa369d0_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ead6427_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2e3747d5_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ee4f114_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4a33e946_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ace23fd_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@54c5c253_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@795fc98e_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@9b520aa_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2020.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="25031715"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="73bac2e0"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="d2a673d2"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="397a94d9"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="20eb52b7"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="e7952266"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="9e5c1332"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="3aeb9fdb"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e1a619d7"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="a84b952b"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>

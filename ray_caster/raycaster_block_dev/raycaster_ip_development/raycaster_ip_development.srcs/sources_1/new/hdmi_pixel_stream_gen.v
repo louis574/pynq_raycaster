@@ -24,6 +24,8 @@ module hdmi_pixel_stream_gen(
 input clk,
 input rst,
 
+input tready,
+
 input [8:0] vert_half_height,
 input side_in,
 input vert_height_valid,
@@ -31,14 +33,25 @@ input [15:0] ray_no,
 
 input last_h,
 
-output wire [1:0] pxl_val, //00 white, 01 grey, 10 green, 11 blue
+output wire [23:0] pxl_val, //00 white, 01 grey, 10 green, 11 blue
 output reg frame_d,
 output reg start_line_d,
-output reg last_pixel
+output reg last_pixel,
+output reg tlast,
+
+output wire start_frame
 
  
 
     );
+     
+    
+    
+reg frame_dd;
+
+assign start_frame = (!frame_dd) & frame_d;
+
+
     
 wire frame;
 reg start_line;
@@ -63,16 +76,16 @@ wire [8:0] half_height_read;
 
 wire strip_side;
 // new
-reg [1:0] pxl_val_r;
+reg [23:0] pxl_val_r;
 assign pxl_val = pxl_val_r;
 
-wire in_wall = (y_coord >= (10'd360 - {1'b0, half_height_read}) && 
-                y_coord <= (10'd360 + {1'b0, half_height_read}));
+wire in_wall = (y_coord >= (10'd240 - {1'b0, half_height_read}) && 
+                y_coord <= (10'd240 + {1'b0, half_height_read}));
 
 always @(posedge clk) begin
     pxl_val_r <= in_wall ? 
-                 (strip_side ? 2'b01 : 2'b00) :
-                 ((y_coord >= 10'd360) ? 2'b10 : 2'b11);
+                 (strip_side ? {8'd210,8'd210,8'd210} : {8'd255,8'd255,8'd255}) :
+                 ((y_coord >= 10'd240) ?  {8'd0,8'd128,8'd0} :{8'd135,8'd206,8'd235});
 end
 
 
@@ -103,18 +116,27 @@ always @(posedge clk) begin
         frame_gap <= 1'b0;
         frame_d <= 1'b0;
         start_line_d <= 1'b0;
+        frame_dd <= 1'b0;
+        tlast <= 1'b0;
     end
     
     else if (last_pixel) begin
+        frame_dd <= frame_d;
         last_pixel <= 1'b0;
         in_frame <= 1'b0;
         frame_gap <= 1'b1;
         
         frame_d <= frame;
         start_line_d <= start_line;
+        
+        tlast<= 1'b0;
+        
+        
+        
     end
     
     else begin
+        frame_dd <= frame_d;
     
         frame_d <= frame;
         start_line_d <= start_line;
@@ -148,20 +170,27 @@ always @(posedge clk) begin
                 current_side[i] <= next_side[i];
             end
         end
-        if(in_frame) begin
+        if(in_frame & tready) begin
+            if(tlast) begin
+                tlast<= 1'b0;
+            end
             if(start_line) begin
                 start_line <= 1'b0;
             end
-            if(x_coord == 10'd719 && y_coord == 10'd719) begin
+            if(x_coord == 10'd639 && y_coord == 10'd479) begin
                 in_frame <= 1'b0;
                 last_pixel <= 1'b1;
                 x_coord <= 10'h0;
                 y_coord <= 10'h0;
+                
+                tlast <= 1'b1;
             end
-            else if(x_coord == 10'd719) begin
+            else if(x_coord == 10'd639) begin
                 x_coord <= 10'd0;
                 y_coord <= y_coord+1;
                 start_line <= 1'b1;
+                
+                tlast<=1'b1;
                 
             end
             else begin
