@@ -22,7 +22,7 @@ for p in raw:
 frame_size = 640 * 480
 print(f"Got {len(pixels)} total pixels ({len(pixels) // frame_size} full frames)")
 
-for frame_num in range(8):
+for frame_num in range(25):
     frame_pixels = pixels[frame_num * frame_size : (frame_num + 1) * frame_size]
     if len(frame_pixels) < frame_size:
         print(f"Frame {frame_num + 1}: not enough pixels ({len(frame_pixels)}), skipping")

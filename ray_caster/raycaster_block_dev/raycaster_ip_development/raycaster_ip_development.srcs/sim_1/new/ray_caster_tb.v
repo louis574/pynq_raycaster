@@ -24,7 +24,6 @@ module ray_caster_tb;
 
 reg clk;
 reg rst;
-reg start_pulse;
 reg tready;
 
 
@@ -45,7 +44,7 @@ wire tlast;
 
 wire [15:0] v_dir_x_r;
 
-wire [15:0] bram_search_address;
+wire [31:0] bram_search_address;
 reg [31:0] bram_data;
 
 
@@ -56,7 +55,7 @@ reg [31:0] test_map [0:33];
 initial $readmemh("test_map.mem", test_map);
 
 always @(posedge clk) begin
-    bram_data <= test_map[bram_search_address];
+    bram_data <= test_map[bram_search_address >> 2];
 end
 
 initial begin
@@ -118,22 +117,28 @@ end
 initial begin 
     tready = 0;
     rst = 1;
-    start_pulse = 0;
 
     #10;
-    start_pulse = 1;
     rst = 0;
     #15;
-    start_pulse = 0;
+    #100;
+    tready = 1;
+    
+    #10000;
+    tready = 0;
+    #10;
+    tready = 1;
+    #10;
+    tready = 0;
+    #20;
+    tready = 1;
     
 
-    #5200000
-    
-    $readmemh("test_map1.mem", test_map);
+    #520000
     
     
     
-    #42000000;
+    #420000000;
     $fclose(f);
     $finish;
 end
@@ -145,7 +150,6 @@ ray_caster dut (
 .clk(clk),
 .rst(rst),
 .tready(tready),
-.start_pulse(start_pulse),
 
 
 .addr(bram_search_address),

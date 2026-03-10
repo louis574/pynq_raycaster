@@ -133,11 +133,23 @@ assign cell_check_y = next_map_y[14:10];
                     bram_check_cycle <= 1'b1;
                     
                     if(r_side_distx < r_side_disty) begin
+                        if((r_side_distx + r_delta_distx) < r_delta_distx) begin
+                            r_side_distx <= 16'hFFFF;
+                        end
+                        else begin
                         r_side_distx <= r_side_distx + r_delta_distx;
+
+                        end
                         side <= 1'b0;
                     end
                     else begin
+                        if(r_side_disty + r_delta_disty < r_delta_disty) begin
+                            r_side_disty <= 16'hFFFF;
+                        end
+                        else begin
                         r_side_disty <= r_side_disty + r_delta_disty;
+
+                        end
                         side <= 1'b1;
                     end
                 

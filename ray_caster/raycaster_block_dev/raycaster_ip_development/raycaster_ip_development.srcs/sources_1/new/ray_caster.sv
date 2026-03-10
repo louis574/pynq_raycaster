@@ -32,7 +32,6 @@ parameter fov = 90
 )(
 input clk,
 input rst,
-input start_pulse,
 input tready,
 
 output reg last_h,
@@ -56,7 +55,7 @@ output wire tlast,
 
 //bram
 
-output wire [15:0] addr,
+output wire [31:0] addr,
 
 input [31:0] bram_data,
 
@@ -100,6 +99,18 @@ input [31:0] bram_data,
 
   
 );
+
+
+    wire internal_pulse;
+    reg started;
+
+    assign internal_pulse = ~started;
+    
+    assign start_pulse = internal_pulse;
+
+
+
+
 
     wire [4:0] cell_check_x;
     wire [4:0] cell_check_y;
@@ -170,7 +181,8 @@ reg [1:0] load_from_bram; //11 load angle, 10 load position
 reg load_stage;
     
     
-assign addr = load_stage ? ( (load_from_bram == 2'b11) ? 16'h0021: 16'h0020) : {11'h0,cell_check_y};
+assign addr = (load_stage ? ( (load_from_bram == 2'b11) ? 32'h00000021: (32'h00000020)) 
+    : {26'h0,cell_check_y}) << 2;
     
 // three cycles: (1) update i, (2) update raydir, (3) BRAM output valid ? latch step/sidedist + assert dda_start
     
@@ -254,6 +266,7 @@ dir_vectors dir_v_lookup(
     
     
     always @(posedge clk) begin
+    
         if(rst) begin
             frame_in_progress <= 1'b0;
             start <= 1'b0;
@@ -266,8 +279,11 @@ dir_vectors dir_v_lookup(
             vert_height_valid <= 1'b0;  
             load_from_bram <= 2'b00;
             load_stage <= 1'b0;
+            started <= 1'b0;
         end
         else if(load_stage) begin
+        
+        
             if(load_from_bram == 2'b11) begin
                 load_from_bram <= 2'b10; 
                 //looking up angle
@@ -314,6 +330,9 @@ dir_vectors dir_v_lookup(
             
         end
         else begin
+            if(internal_pulse) begin
+                started <= 1'b1;
+            end
         
             new_ray_d  <= new_ray;
             new_ray_dd <= new_ray_d;

@@ -9,14 +9,38 @@
       <spirit:name>interface_axis</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
-      <spirit:slave/>
+      <spirit:master/>
       <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TUSER</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>start_frame</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>pxl_val</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
         <spirit:portMap>
           <spirit:logicalPort>
             <spirit:name>TLAST</spirit:name>
           </spirit:logicalPort>
           <spirit:physicalPort>
             <spirit:name>tlast</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>frame</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
         <spirit:portMap>
@@ -86,7 +110,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>95e493f5</spirit:value>
+            <spirit:value>7637d77e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -102,7 +126,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>95e493f5</spirit:value>
+            <spirit:value>7637d77e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -117,7 +141,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>4bc72b6f</spirit:value>
+            <spirit:value>8b7896f7</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -152,19 +176,6 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>rst</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>std_logic</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>start_pulse</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -352,7 +363,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long">15</spirit:left>
+            <spirit:left spirit:format="long">31</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -776,7 +787,7 @@
       <spirit:file>
         <spirit:name>raycaster_ip_development.srcs/sources_1/new/ray_caster.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_9c116a00</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_095ab268</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -904,20 +915,22 @@
       <xilinx:displayName>ray_caster_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2026-03-06T18:47:31Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2026-03-10T13:34:59Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4a33e946_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ace23fd_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@54c5c253_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@795fc98e_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@9b520aa_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1beae5ec_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f5b0389_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@44c0ba07_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7f953d92_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52cae7d9_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@13a41204_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@54929b6b_ARCHIVE_LOCATION">c:/users/louja/desktop/imperial_2/ip/pynq_raycaster/ray_caster/raycaster_block_dev/raycaster_ip_development</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2020.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="e7952266"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="9e5c1332"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="3aeb9fdb"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="9608aba5"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="2ff71385"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="38eeeadc"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e1a619d7"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="a84b952b"/>
     </xilinx:packagingInfo>

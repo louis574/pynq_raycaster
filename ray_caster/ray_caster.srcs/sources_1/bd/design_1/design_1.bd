@@ -1,13 +1,14 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0xCC6CFA53C0928857",
+      "boundary_crc": "0x8995BC50401782B6",
       "device": "xc7z020clg400-1",
       "gen_directory": "../../../../ray_caster.gen/sources_1/bd/design_1",
       "name": "design_1",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2020.2"
+      "tool_version": "2020.2",
+      "validated": "true"
     },
     "design_tree": {
       "blk_mem_gen_0": "",
@@ -15,16 +16,80 @@
       "axi_bram_ctrl_0": "",
       "axi_smc": "",
       "rst_ps7_0_50M": "",
+      "hdmi_480p_220hz_0": "",
+      "util_vector_logic_0": "",
+      "xlconstant_0": "",
+      "xlconstant_1": "",
       "ray_caster_0": ""
     },
     "interface_ports": {
       "DDR": {
         "mode": "Master",
-        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0"
+        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0",
+        "parameters": {
+          "AXI_ARBITRATION_SCHEME": {
+            "value": "TDM",
+            "value_src": "default"
+          },
+          "BURST_LENGTH": {
+            "value": "8",
+            "value_src": "default"
+          },
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          },
+          "CAS_LATENCY": {
+            "value": "11",
+            "value_src": "default"
+          },
+          "CAS_WRITE_LATENCY": {
+            "value": "11",
+            "value_src": "default"
+          },
+          "CS_ENABLED": {
+            "value": "true",
+            "value_src": "default"
+          },
+          "DATA_MASK_ENABLED": {
+            "value": "true",
+            "value_src": "default"
+          },
+          "DATA_WIDTH": {
+            "value": "8",
+            "value_src": "default"
+          },
+          "MEMORY_TYPE": {
+            "value": "COMPONENTS",
+            "value_src": "default"
+          },
+          "MEM_ADDR_MAP": {
+            "value": "ROW_COLUMN_BANK",
+            "value_src": "default"
+          },
+          "SLOT": {
+            "value": "Single",
+            "value_src": "default"
+          },
+          "TIMEPERIOD_PS": {
+            "value": "1250",
+            "value_src": "default"
+          }
+        }
       },
       "FIXED_IO": {
         "mode": "Master",
-        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0"
+        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0",
+        "parameters": {
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          }
+        }
+      },
+      "TMDS_0_0": {
+        "mode": "Master",
+        "vlnv": "digilentinc.com:interface:tmds_rtl:1.0"
       }
     },
     "components": {
@@ -34,6 +99,9 @@
         "xci_path": "ip\\design_1_blk_mem_gen_0_0\\design_1_blk_mem_gen_0_0.xci",
         "inst_hier_path": "blk_mem_gen_0",
         "parameters": {
+          "Assume_Synchronous_Clk": {
+            "value": "false"
+          },
           "EN_SAFETY_CKT": {
             "value": "true"
           },
@@ -47,7 +115,13 @@
             "value": "True_Dual_Port_RAM"
           },
           "Operating_Mode_A": {
-            "value": "WRITE_FIRST"
+            "value": "READ_FIRST"
+          },
+          "Operating_Mode_B": {
+            "value": "READ_FIRST"
+          },
+          "Port_A_Write_Rate": {
+            "value": "50"
           },
           "Port_B_Clock": {
             "value": "100"
@@ -317,6 +391,51 @@
         "xci_path": "ip\\design_1_rst_ps7_0_50M_0\\design_1_rst_ps7_0_50M_0.xci",
         "inst_hier_path": "rst_ps7_0_50M"
       },
+      "hdmi_480p_220hz_0": {
+        "vlnv": "xilinx.com:user:hdmi_480p_220hz:1.0",
+        "xci_name": "design_1_hdmi_480p_220hz_0_0",
+        "xci_path": "ip\\design_1_hdmi_480p_220hz_0_0\\design_1_hdmi_480p_220hz_0_0.xci",
+        "inst_hier_path": "hdmi_480p_220hz_0"
+      },
+      "util_vector_logic_0": {
+        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
+        "xci_name": "design_1_util_vector_logic_0_0",
+        "xci_path": "ip\\design_1_util_vector_logic_0_0\\design_1_util_vector_logic_0_0.xci",
+        "inst_hier_path": "util_vector_logic_0",
+        "parameters": {
+          "C_OPERATION": {
+            "value": "not"
+          },
+          "C_SIZE": {
+            "value": "1"
+          }
+        }
+      },
+      "xlconstant_0": {
+        "vlnv": "xilinx.com:ip:xlconstant:1.1",
+        "xci_name": "design_1_xlconstant_0_0",
+        "xci_path": "ip\\design_1_xlconstant_0_0\\design_1_xlconstant_0_0.xci",
+        "inst_hier_path": "xlconstant_0",
+        "parameters": {
+          "CONST_VAL": {
+            "value": "0"
+          },
+          "CONST_WIDTH": {
+            "value": "4"
+          }
+        }
+      },
+      "xlconstant_1": {
+        "vlnv": "xilinx.com:ip:xlconstant:1.1",
+        "xci_name": "design_1_xlconstant_1_0",
+        "xci_path": "ip\\design_1_xlconstant_1_0\\design_1_xlconstant_1_0.xci",
+        "inst_hier_path": "xlconstant_1",
+        "parameters": {
+          "CONST_VAL": {
+            "value": "1"
+          }
+        }
+      },
       "ray_caster_0": {
         "vlnv": "xilinx.com:user:ray_caster:1.0",
         "xci_name": "design_1_ray_caster_0_0",
@@ -325,28 +444,40 @@
       }
     },
     "interface_nets": {
-      "processing_system7_0_M_AXI_GP0": {
-        "interface_ports": [
-          "processing_system7_0/M_AXI_GP0",
-          "axi_smc/S00_AXI"
-        ]
-      },
       "processing_system7_0_FIXED_IO": {
         "interface_ports": [
           "FIXED_IO",
           "processing_system7_0/FIXED_IO"
         ]
       },
+      "processing_system7_0_M_AXI_GP0": {
+        "interface_ports": [
+          "processing_system7_0/M_AXI_GP0",
+          "axi_smc/S00_AXI"
+        ]
+      },
+      "ray_caster_0_interface_axis": {
+        "interface_ports": [
+          "ray_caster_0/interface_axis",
+          "hdmi_480p_220hz_0/video_in_0"
+        ]
+      },
       "axi_bram_ctrl_0_BRAM_PORTA": {
         "interface_ports": [
-          "blk_mem_gen_0/BRAM_PORTA",
-          "axi_bram_ctrl_0/BRAM_PORTA"
+          "axi_bram_ctrl_0/BRAM_PORTA",
+          "blk_mem_gen_0/BRAM_PORTA"
         ]
       },
       "processing_system7_0_DDR": {
         "interface_ports": [
           "DDR",
           "processing_system7_0/DDR"
+        ]
+      },
+      "hdmi_480p_220hz_0_TMDS_0": {
+        "interface_ports": [
+          "TMDS_0_0",
+          "hdmi_480p_220hz_0/TMDS_0"
         ]
       },
       "axi_smc_M00_AXI": {
@@ -357,21 +488,11 @@
       }
     },
     "nets": {
-      "processing_system7_0_FCLK_CLK0": {
-        "ports": [
-          "processing_system7_0/FCLK_CLK0",
-          "processing_system7_0/M_AXI_GP0_ACLK",
-          "axi_smc/aclk",
-          "axi_bram_ctrl_0/s_axi_aclk",
-          "rst_ps7_0_50M/slowest_sync_clk",
-          "ray_caster_0/clk",
-          "blk_mem_gen_0/clkb"
-        ]
-      },
       "processing_system7_0_FCLK_RESET0_N": {
         "ports": [
           "processing_system7_0/FCLK_RESET0_N",
-          "rst_ps7_0_50M/ext_reset_in"
+          "rst_ps7_0_50M/ext_reset_in",
+          "hdmi_480p_220hz_0/reset"
         ]
       },
       "rst_ps7_0_50M_peripheral_aresetn": {
@@ -381,16 +502,51 @@
           "axi_smc/aresetn"
         ]
       },
-      "rst_ps7_0_50M_interconnect_aresetn": {
-        "ports": [
-          "rst_ps7_0_50M/interconnect_aresetn",
-          "ray_caster_0/rst"
-        ]
-      },
       "blk_mem_gen_0_doutb": {
         "ports": [
           "blk_mem_gen_0/doutb",
           "ray_caster_0/bram_data"
+        ]
+      },
+      "hdmi_480p_220hz_0_clk_out1_1": {
+        "ports": [
+          "hdmi_480p_220hz_0/clk_out1_1",
+          "blk_mem_gen_0/clkb",
+          "ray_caster_0/clk"
+        ]
+      },
+      "util_vector_logic_0_Res": {
+        "ports": [
+          "util_vector_logic_0/Res",
+          "ray_caster_0/rst"
+        ]
+      },
+      "hdmi_480p_220hz_0_peripheral_aresetn": {
+        "ports": [
+          "hdmi_480p_220hz_0/peripheral_aresetn",
+          "util_vector_logic_0/Op1"
+        ]
+      },
+      "xlconstant_1_dout": {
+        "ports": [
+          "xlconstant_1/dout",
+          "blk_mem_gen_0/enb"
+        ]
+      },
+      "processing_system7_0_FCLK_CLK0": {
+        "ports": [
+          "processing_system7_0/FCLK_CLK0",
+          "processing_system7_0/M_AXI_GP0_ACLK",
+          "axi_smc/aclk",
+          "axi_bram_ctrl_0/s_axi_aclk",
+          "rst_ps7_0_50M/slowest_sync_clk",
+          "hdmi_480p_220hz_0/clk_in"
+        ]
+      },
+      "ray_caster_0_addr": {
+        "ports": [
+          "ray_caster_0/addr",
+          "blk_mem_gen_0/addrb"
         ]
       }
     },
