@@ -1,0 +1,74 @@
+from pynq import Overlay
+from pynq.ps import Clocks
+import numpy as np
+import time
+
+ol = Overlay("/home/xilinx/jupyter_notebooks/hdmi_tests/design_4_wrapper.bit")
+
+bram = ol.axi_bram_ctrl_0
+data = [0xFFFFFFFF,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0x80000001,
+        0xFFFFFFFF,
+        0x0C000C00,
+        0x00000000,    
+       ]
+
+time.sleep(0.1)
+for i, val in enumerate(data):
+    bram.write(i * 4, val)
+    print("BRAM written successfully")
+    print(f"Address {i} (0x{i:02X}): 0x{val:08X}")
+
+
+# Set correct clock frequency
+Clocks.fclk0_mhz = 50.0
+
+# Wait for clocking wizard to relock
+time.sleep(3)
+   
+option = False
+while(False):
+    time.sleep(1)
+    option = not option
+    if(option):
+        val = 0x00000FFF
+        bram.write(0 * 16, val)
+        print(f"Address {0} (0x{0:02X}): 0x{val:08X}")
+    else:
+        val = 0x00000000
+        bram.write(0 * 4, val)
+        print(f"Address {0} (0x{0:02X}): 0x{val:08X}")
+   
+
+
+print(f"FCLK0: {Clocks.fclk0_mhz} MHz")
+print("done")
