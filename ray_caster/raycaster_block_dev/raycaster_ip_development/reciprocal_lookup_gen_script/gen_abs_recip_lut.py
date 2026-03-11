@@ -13,14 +13,13 @@ Verilog usage:
     wire [15:0] deltaDistX = delta_lut[idx];
 """
 
-OUTPUT_FRAC_BITS = 10
+OUTPUT_FRAC_BITS = 12
 OUTPUT_SCALE     = 1 << OUTPUT_FRAC_BITS   # 1024
-MAX_OUTPUT       = (1 << 16) - 1           # 65535
+MAX_OUTPUT       = (1 << 18) - 1           # 65535
 
-INPUT_FRAC_BITS  = 9
-INPUT_SCALE      = 1 << INPUT_FRAC_BITS    # 512  (Q1.9)
-
-LUT_SIZE         = 1024
+INPUT_FRAC_BITS = 9    # was 9
+INPUT_SCALE     = 1 << INPUT_FRAC_BITS  # 1024
+LUT_SIZE        = 1024  # was 1024
 
 lut = []
 for i in range(LUT_SIZE):

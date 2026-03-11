@@ -123,11 +123,11 @@ input [31:0] bram_data,
     reg [16:0] i; // 17 bits for best accuracy
     reg [15:0] ray_no;
     
-    wire [15:0] deltadistx; // Q6.10 unisgned
-    wire [15:0] deltadisty;
+    wire [17:0] deltadistx; // Q6.12 unisgned
+    wire [17:0] deltadisty;
     
-    reg [15:0] sidedistx;
-    reg [15:0] sidedisty;
+    reg [20:0] sidedistx;
+    reg [20:0] sidedisty;
     
     reg step_x; // 1'b0 = -1, 1'b1 = 1
     reg step_y;
@@ -164,13 +164,13 @@ input [31:0] bram_data,
     assign v_dir_x_r = dir_x_r;
     
     
-    wire [31:0] neg_side_distx_multiply;
-    wire [31:0] pos_side_distx_multiply;
-    wire [31:0] neg_side_disty_multiply;
-    wire [31:0] pos_side_disty_multiply;
+    wire [33:0] neg_side_distx_multiply;
+    wire [33:0] pos_side_distx_multiply;
+    wire [33:0] neg_side_disty_multiply;
+    wire [33:0] pos_side_disty_multiply;
     
     
-    assign neg_side_distx_multiply = (pos_x_r-map_x) * (deltadistx);
+    assign neg_side_distx_multiply = (pos_x_r-map_x) * (deltadistx); //remember deltadist is now 6.12
     assign pos_side_distx_multiply = (map_x + {1'b1,10'h0} - pos_x_r) * deltadistx;
     assign neg_side_disty_multiply = (pos_y_r-map_y) * (deltadisty);
     assign pos_side_disty_multiply = (map_y + {1'b1,10'h0} - pos_y_r) * deltadisty;
@@ -189,22 +189,22 @@ assign addr = (load_stage ? ( (load_from_bram == 2'b11) ? 32'h00000021: (32'h000
     always @(posedge clk) begin
         if(raydir_x[dwidth-1]) begin
             step_x <= 1'b0;
-            sidedistx <= neg_side_distx_multiply[25:10];
+            sidedistx <= neg_side_distx_multiply[27:10];
             
         end
         else begin
             step_x <= 1'b1;
-            sidedistx <= pos_side_distx_multiply[25:10];
+            sidedistx <= pos_side_distx_multiply[27:10];
         end
         
         if(raydir_y[dwidth-1]) begin
             step_y <= 1'b0;
-            sidedisty <= neg_side_disty_multiply[25:10];
+            sidedisty <= neg_side_disty_multiply[27:10];
             
         end
         else begin
             step_y <= 1'b1;
-            sidedisty <= pos_side_disty_multiply[25:10];
+            sidedisty <= pos_side_disty_multiply[27:10];
         end
     
     end
@@ -469,13 +469,26 @@ dir_vectors dir_v_lookup(
 
     initial $readmemh("bar_height_lut.mem", bar_half_height_lut);
     
+    
+    // from the sprite caster
+    
+    wire [11:0] sprite_transform_y;
+    reg  [9:0] sprite_result; // remember this is 240/distance
+    
+    
+    //
+    
+    
+    // does 240/distance to find the height of a half a bar
     always @(posedge clk) begin
         if(ray_done) begin
             vert_height <= bar_half_height_lut[distance[15:4]];
+            sprite_result <= bar_half_height_lut[sprite_transform_y];
             completed_ray_no <= ray_no;
             side <= side_wire;
         end
     end
+    // sprite heights mut be a division of 2 of 480, aka, 480,240,120,60 - because then can just shift the result of this lut to get half height
     
 
     

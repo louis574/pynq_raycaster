@@ -49,14 +49,14 @@ parameter lookup_f_bits = 9
     input [dwidth-1:0] in_x,
     input [dwidth-1:0] in_y,
     
-    output reg [outwidth-1:0] out_x,
-    output reg [outwidth-1:0] out_y
+    output reg [17:0] out_x,
+    output reg [17:0] out_y
     
     
     );
     
     
-    reg [outwidth-1:0] recip_lookup [0:(2**(1+lookup_f_bits))-1];
+    reg [17:0] recip_lookup [0:1023];
    
     
     initial $readmemh("delta_lut.mem", recip_lookup);
@@ -76,7 +76,7 @@ parameter lookup_f_bits = 9
     
         
     always @(posedge clk) begin
-        out_x <= recip_lookup[clipped_index_x];
+        out_x <= recip_lookup[clipped_index_x]; //outputs are q6.12
         out_y <= recip_lookup[clipped_index_y];
         
     end

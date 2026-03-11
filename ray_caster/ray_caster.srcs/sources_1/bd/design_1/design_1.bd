@@ -450,10 +450,16 @@
           "processing_system7_0/FIXED_IO"
         ]
       },
-      "processing_system7_0_M_AXI_GP0": {
+      "hdmi_480p_220hz_0_TMDS_0": {
         "interface_ports": [
-          "processing_system7_0/M_AXI_GP0",
-          "axi_smc/S00_AXI"
+          "TMDS_0_0",
+          "hdmi_480p_220hz_0/TMDS_0"
+        ]
+      },
+      "axi_smc_M00_AXI": {
+        "interface_ports": [
+          "axi_smc/M00_AXI",
+          "axi_bram_ctrl_0/S_AXI"
         ]
       },
       "ray_caster_0_interface_axis": {
@@ -468,22 +474,16 @@
           "blk_mem_gen_0/BRAM_PORTA"
         ]
       },
+      "processing_system7_0_M_AXI_GP0": {
+        "interface_ports": [
+          "processing_system7_0/M_AXI_GP0",
+          "axi_smc/S00_AXI"
+        ]
+      },
       "processing_system7_0_DDR": {
         "interface_ports": [
           "DDR",
           "processing_system7_0/DDR"
-        ]
-      },
-      "hdmi_480p_220hz_0_TMDS_0": {
-        "interface_ports": [
-          "TMDS_0_0",
-          "hdmi_480p_220hz_0/TMDS_0"
-        ]
-      },
-      "axi_smc_M00_AXI": {
-        "interface_ports": [
-          "axi_smc/M00_AXI",
-          "axi_bram_ctrl_0/S_AXI"
         ]
       }
     },

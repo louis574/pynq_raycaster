@@ -27,12 +27,12 @@ module dda_main_body(
     
     input cell_status, //from bram
     
-    input [15:0] side_disty,
-    input [15:0] delta_disty,
+    input [20:0] side_disty,
+    input [17:0] delta_disty, //6.12
     input [15:0] map_y,
     input stepy,
-    input [15:0] side_distx,
-    input [15:0] delta_distx,
+    input [20:0] side_distx,
+    input [17:0] delta_distx,  //6.12
     input [15:0] map_x,
     input stepx,
     
@@ -51,12 +51,12 @@ module dda_main_body(
     reg dda_load_cycle;
 
     
-    reg [15:0] r_side_disty;
-    reg [15:0] r_delta_disty;
+    reg [22:0] r_side_disty;
+    reg [17:0] r_delta_disty;
     reg [15:0] r_map_y;
     reg r_stepy;
-    reg [15:0] r_side_distx;
-    reg [15:0] r_delta_distx;
+    reg [22:0] r_side_distx;
+    reg [17:0] r_delta_distx;
     reg [15:0] r_map_x;
     reg r_stepx;
     
@@ -73,7 +73,12 @@ wire [15:0] next_map_y = r_side_distx < r_side_disty ?
  
 assign cell_check_x = next_map_x[14:10];
 assign cell_check_y = next_map_y[14:10];
+
+wire [20:0] distance_sub_x;
+wire [20:0] distance_sub_y;
     
+assign distance_sub_y = (r_side_disty - r_delta_disty + 2'b10);
+assign distance_sub_x = (r_side_distx - r_delta_distx + 2'b10);
     
     always @(posedge clk) begin
         if(rst) begin
@@ -119,10 +124,10 @@ assign cell_check_y = next_map_y[14:10];
                         side_out <= side;
                         
                         if(side) begin
-                            distance <= r_side_disty - r_delta_disty;
+                            distance <= distance_sub_y[17:2];
                         end
                         else begin
-                            distance <= r_side_distx - r_delta_distx;
+                            distance <= distance_sub_x[17:2];
                         end
                         
                     end
@@ -133,23 +138,18 @@ assign cell_check_y = next_map_y[14:10];
                     bram_check_cycle <= 1'b1;
                     
                     if(r_side_distx < r_side_disty) begin
-                        if((r_side_distx + r_delta_distx) < r_delta_distx) begin
-                            r_side_distx <= 16'hFFFF;
-                        end
-                        else begin
+
+                        
+                        
                         r_side_distx <= r_side_distx + r_delta_distx;
 
-                        end
+
                         side <= 1'b0;
                     end
                     else begin
-                        if(r_side_disty + r_delta_disty < r_delta_disty) begin
-                            r_side_disty <= 16'hFFFF;
-                        end
-                        else begin
+
                         r_side_disty <= r_side_disty + r_delta_disty;
 
-                        end
                         side <= 1'b1;
                     end
                 
