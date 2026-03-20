@@ -39,9 +39,11 @@ output reg last_h,
 
 
 output wire [15:0] distance,
+output wire [4:0] wall_x,
 output wire ray_done,
  
-output reg [8:0] vert_height, // 9 bits
+output reg [9:0] vert_height, // 9 bits
+output reg [15:0] wall_distance,
 output reg vert_height_valid,
 
 output wire [23:0] pxl_val,
@@ -94,11 +96,32 @@ input [31:0] bram_data,
     
     output v_dda_start,
     
-    output [15:0] v_dir_x_r
+    output [15:0] v_dir_x_r,
+    
+    
+    output wire [9:0]  v_sprite_half_height,
+    output wire [9:0]  v_sprite_half_width,
+    output wire [9:0]  v_sprite_start_x,
+    output wire [9:0]  v_sprite_end_x,
+    output wire [15:0] v_sprite_distance,
+    output wire [9:0]  v_sprite_screen_x,
+    output [15:0] v_transform_x,
+    output [15:0] v_transform_y,
+    output [9:0] v_r_sprite_half_height,
+    output [9:0] v_r_sprite_half_width,
+    output [9:0] v_r_sprite_start_x,
+    output [9:0] v_r_sprite_end_x,
+    output [15:0] v_r_sprite_distance,
+    
+    output [33:0] v_wall_X_calc_y,
+    output [33:0] v_wall_X_calc_x 
+    
+
 
 
   
 );
+
 
 
     wire internal_pulse;
@@ -108,7 +131,8 @@ input [31:0] bram_data,
     
     assign start_pulse = internal_pulse;
 
-
+    reg [15:0] cell_offset_x;
+    reg [15:0] cell_offset_y;
 
 
 
@@ -139,6 +163,9 @@ input [31:0] bram_data,
     reg [dwidth-1:0] dir_x_r, dir_y_r;
     reg [dwidth-1:0] plane_x_r, plane_y_r;
     reg [dwidth-1:0] pos_x_r, pos_y_r;
+    
+    
+    
     
     assign v_raydir_x = raydir_x;
     assign v_raydir_y = raydir_y;
@@ -176,12 +203,14 @@ input [31:0] bram_data,
     assign pos_side_disty_multiply = (map_y + {1'b1,10'h0} - pos_y_r) * deltadisty;
     
     
+    
+    
 // bram controller
 reg [1:0] load_from_bram; //11 load angle, 10 load position
 reg load_stage;
     
     
-assign addr = (load_stage ? ( (load_from_bram == 2'b11) ? 32'h00000021: (32'h00000020)) 
+assign addr = (load_stage ? ( (load_from_bram == 2'b11) ? 32'h00000021: ((load_from_bram == 2'b10) ? 32'h00000020 : 32'h00000022)) 
     : {26'h0,cell_check_y}) << 2;
     
 // three cycles: (1) update i, (2) update raydir, (3) BRAM output valid ? latch step/sidedist + assert dda_start
@@ -189,24 +218,25 @@ assign addr = (load_stage ? ( (load_from_bram == 2'b11) ? 32'h00000021: (32'h000
     always @(posedge clk) begin
         if(raydir_x[dwidth-1]) begin
             step_x <= 1'b0;
-            sidedistx <= neg_side_distx_multiply[27:10];
-            
+            sidedistx <= |neg_side_distx_multiply[33:28] ? 21'h1FFFFF : neg_side_distx_multiply[27:10];
+            cell_offset_x <= (pos_x_r-map_x);
         end
         else begin
             step_x <= 1'b1;
-            sidedistx <= pos_side_distx_multiply[27:10];
+            sidedistx <= |pos_side_distx_multiply[33:28] ? 21'h1FFFFF : pos_side_distx_multiply[27:10];
+            cell_offset_x <= (map_x + {1'b1,10'h0} - pos_x_r);
         end
         
         if(raydir_y[dwidth-1]) begin
             step_y <= 1'b0;
-            sidedisty <= neg_side_disty_multiply[27:10];
-            
+            sidedisty <= |neg_side_disty_multiply[33:28] ? 21'h1FFFFF : neg_side_disty_multiply[27:10];
+            cell_offset_y <= (pos_y_r-map_y);
         end
         else begin
             step_y <= 1'b1;
-            sidedisty <= pos_side_disty_multiply[27:10];
+            sidedisty <= |pos_side_disty_multiply[33:28] ? 21'h1FFFFF : pos_side_disty_multiply[27:10];
+            cell_offset_y <= (map_y + {1'b1,10'h0} - pos_y_r);
         end
-    
     end
    
 
@@ -253,6 +283,12 @@ wire [15:0] dir_wire_y;
 wire [15:0] plane_wire_x;
 wire [15:0] plane_wire_y;
 
+    
+        wire sprite_done;   
+
+reg [15:0] sprite_x_position;
+reg [15:0] sprite_y_position;
+
 
 dir_vectors dir_v_lookup(
 .clk,
@@ -296,17 +332,34 @@ dir_vectors dir_v_lookup(
             end
             else if(load_from_bram == 2'b01) begin
                 //load the returned dir and plane vectors from the vector modules
+                
+                //looking up sprite positions
                 pos_x_r   <= bram_data[31:16];
                 pos_y_r   <= bram_data[15:0];
                 
                 
                  dir_x_r   <= dir_wire_x;
                  dir_y_r   <= dir_wire_y;
-                  plane_x_r <= plane_wire_x;
-                   plane_y_r <=plane_wire_y;
+                 plane_x_r <= plane_wire_x;
+                 plane_y_r <=plane_wire_y;
                    
                    
-                       new_ray_d   <= 1'b0;
+
+                
+                load_from_bram <= 2'b00;
+
+                
+               
+                
+            end
+            
+            else if(load_from_bram == 2'b00) begin
+                //save sprite positions
+                sprite_y_position <= bram_data[15:0];
+                sprite_x_position <= bram_data[31:16];
+            
+                load_stage <= 1'b0;
+                new_ray_d   <= 1'b0;
                 new_ray_dd  <= 1'b0;
                 new_ray_ddd <= 1'b0;
                                 
@@ -314,18 +367,6 @@ dir_vectors dir_v_lookup(
                 frame_in_progress <= 1'b1;
                 start <= 1'b1;
                 new_ray <= 1'b1;
-                
-                load_from_bram <= 2'b00;
-                load_stage <= 1'b0;
-                
-                
-                /*dir_x_r   <= dir_x;
-                dir_y_r   <= dir_y;
-                plane_x_r <= plane_x;
-                plane_y_r <= plane_y;
-                pos_x_r   <= pos_x;
-                pos_y_r   <= pos_y; */
-                
             end
             
         end
@@ -337,7 +378,7 @@ dir_vectors dir_v_lookup(
             new_ray_d  <= new_ray;
             new_ray_dd <= new_ray_d;
             new_ray_ddd <= new_ray_dd;
-            vert_height_valid <= ray_done;
+            vert_height_valid <= (ray_done);
             
             if(new_ray_ddd && frame_in_progress && !last_h) begin
                 dda_start <= 1'b1; 
@@ -440,8 +481,16 @@ dir_vectors dir_v_lookup(
         .start(dda_start),
         .rst(rst),
         
+        .pos_x(pos_x_r),
+        .pos_y(pos_y_r),
+        .dir_x(dir_x_r),
+        .dir_y(dir_y_r),
+        
         .cell_check_x(cell_check_x),
         .cell_check_y(cell_check_y), 
+        
+        .initial_cell_offset_x(cell_offset_x),
+        .initial_cell_offset_y(cell_offset_y),
         
         .cell_status(cell_status), //from bram
         
@@ -455,14 +504,18 @@ dir_vectors dir_v_lookup(
         .stepx(step_x),
         
         .distance(distance),
+        .wall_x(wall_x),
         .ray_done(ray_done),
-        .side_out(side_wire)
+        .side_out(side_wire),
+        
+        .v_wall_X_calc_y(v_wall_X_calc_y),
+        .v_wall_X_calc_x(v_wall_X_calc_x)
     );  
     
     
     // final bar half-height calculation
     
-    reg [8:0] bar_half_height_lut [0:4097];
+    reg [9:0] bar_half_height_lut [0:4097];
     
 
        reg [15:0] completed_ray_no; 
@@ -473,7 +526,9 @@ dir_vectors dir_v_lookup(
     // from the sprite caster
     
     wire [11:0] sprite_transform_y;
-    reg  [9:0] sprite_result; // remember this is 240/distance
+    
+    reg [4:0] wall_x_r;
+    reg  [10:0] sprite_result; // remember this is 240/distance
     
     
     //
@@ -481,8 +536,10 @@ dir_vectors dir_v_lookup(
     
     // does 240/distance to find the height of a half a bar
     always @(posedge clk) begin
-        if(ray_done) begin
+        if(1) begin
             vert_height <= bar_half_height_lut[distance[15:4]];
+            wall_distance <= distance;
+            wall_x_r <= wall_x;
             sprite_result <= bar_half_height_lut[sprite_transform_y];
             completed_ray_no <= ray_no;
             side <= side_wire;
@@ -492,7 +549,15 @@ dir_vectors dir_v_lookup(
     
 
     
-    
+        wire [9:0] sprite_half_height;
+        wire [9:0] sprite_half_width;
+        wire signed [10:0] sprite_start_x;
+        wire signed [10:0] sprite_end_x;
+        wire [15:0] sprite_distance;
+        wire sprite_off_screen;
+        
+ 
+      
 
     
     // hdmi output
@@ -507,13 +572,83 @@ dir_vectors dir_v_lookup(
     .last_h(last_h),
     .side_in(side),
     
+    .wall_x(wall_x_r),
+    
+    
+    .wall_distance(wall_distance),
+    //for sprites
+    
+    .sprite_half_height(sprite_half_height),
+    .sprite_half_width(sprite_half_width),
+    .sprite_start_x(sprite_start_x),
+    .sprite_end_x(sprite_end_x),
+    .sprite_distance(sprite_distance),
+    .sprite_off_screen(sprite_off_screen),
+    
+    
+    
+    
     .pxl_val(pxl_val),
     .frame_d(frame),
     .start_line_d(start_line),
     .last_pixel(last_pixel),
     .start_frame(start_frame),
-    .tlast(tlast)
+    .tlast(tlast),
     
+    
+    
+    
+    
+    .v_r_sprite_half_height(v_r_sprite_half_height),
+.v_r_sprite_half_width(v_r_sprite_half_width),
+.v_r_sprite_start_x(v_r_sprite_start_x),
+.v_r_sprite_end_x(v_r_sprite_end_x),
+.v_r_sprite_distance(v_r_sprite_distance)
+    
+    
+    
+    
+    );
+    
+
+
+    
+    
+    sprite_caster sprite (
+        .clk(clk),
+        .start(start),
+        .rst(rst),
+        
+        .sprite_x(sprite_x_position), //6.10
+        .sprite_y(sprite_y_position),
+        .pos_x(pos_x_r), //6.10
+        .pos_y(pos_y_r),
+        .dir_x(dir_x_r), //2.14
+        .dir_y(dir_y_r),
+        .plane_x(plane_x_r), //2.14
+        .plane_y(plane_y_r),
+        
+        //.sprite_dist_lookup_result(sprite_result), // remember 240/distance - and comes one cycle after //height up from centre
+        
+    
+    .v_sprite_half_height(v_sprite_half_height),
+    .v_sprite_half_width(v_sprite_half_width),
+    .v_sprite_start_x(v_sprite_start_x),
+    .v_sprite_end_x(v_sprite_end_x),
+    .v_sprite_distance(v_sprite_distance),
+    .v_sprite_screen_x(v_sprite_screen_x),
+    .v_transform_x(v_transform_x),
+    .v_transform_y(v_transform_y),
+    
+    
+    .sprite_half_height(sprite_half_height),
+    .sprite_half_width(sprite_half_width),
+    .sprite_start_x(sprite_start_x),
+    .sprite_end_x(sprite_end_x),
+    .sprite_distance(sprite_distance),
+    .sprite_off_screen(sprite_off_screen)
+
+        
     
     
     
@@ -523,5 +658,8 @@ dir_vectors dir_v_lookup(
     
 
 
+    assign v_sprite_start_x = sprite_start_x;
+    assign v_sprite_end_x = sprite_end_x;
+    
 
 endmodule

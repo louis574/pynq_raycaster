@@ -27,7 +27,7 @@ reg rst;
 reg tready;
 
 
-
+wire [4:0] wall_x;
 wire last_h;
 
 
@@ -45,14 +45,18 @@ wire tlast;
 wire [15:0] v_dir_x_r;
 
 wire [31:0] bram_search_address;
+
+
+
+
 reg [31:0] bram_data;
 
 
 
 
-reg [31:0] test_map [0:33];
+reg [31:0] test_map [0:34];
 
-initial $readmemh("test_map.mem", test_map);
+initial $readmemh("test_map1.mem", test_map);
 
 always @(posedge clk) begin
     bram_data <= test_map[bram_search_address >> 2];
@@ -98,6 +102,28 @@ end
     wire dda_start;
     
     
+wire [9:0]  v_sprite_half_height;
+wire [9:0]  v_sprite_half_width;
+wire [9:0]  v_sprite_start_x;
+wire [9:0]  v_sprite_end_x;
+wire [15:0] v_sprite_distance;
+wire [9:0]  v_sprite_screen_x;
+wire [15:0] v_transform_x;
+wire [15:0] v_transform_y;
+
+
+
+wire [9:0] v_r_sprite_half_height;
+wire [9:0] v_r_sprite_half_width;
+wire [9:0] v_r_sprite_start_x;
+wire [9:0] v_r_sprite_end_x;
+wire [15:0] v_r_sprite_distance;
+
+    wire [33:0] v_wall_X_calc_y;
+    wire [33:0] v_wall_X_calc_x;
+    
+
+    
     
     wire [8:0] vert_height; // 9 bits
     wire vert_height_valid;
@@ -118,7 +144,7 @@ initial begin
     tready = 0;
     rst = 1;
 
-    #10;
+    #30;
     rst = 0;
     #15;
     #100;
@@ -136,7 +162,7 @@ initial begin
 
     #520000
     
-    
+    $readmemh("test_map.mem", test_map);
     
     #420000000;
     $fclose(f);
@@ -187,6 +213,7 @@ ray_caster dut (
 .last_pixel(last_pixel),
 .start_frame(start_frame),
 .tlast(tlast),
+.wall_x(wall_x),
 
 
 
@@ -223,9 +250,28 @@ ray_caster dut (
     
     .v_dda_start(dda_start),
     
-    .v_dir_x_r(v_dir_x_r)
+    .v_dir_x_r(v_dir_x_r),
 
 
+    .v_sprite_half_height(v_sprite_half_height),
+    .v_sprite_half_width(v_sprite_half_width),
+    .v_sprite_start_x(v_sprite_start_x),
+    .v_sprite_end_x(v_sprite_end_x),
+    .v_sprite_distance(v_sprite_distance),
+    .v_sprite_screen_x(v_sprite_screen_x),
+    .v_transform_x(v_transform_x),
+    .v_transform_y(v_transform_y),
+    
+    
+    .v_r_sprite_half_height(v_r_sprite_half_height),
+.v_r_sprite_half_width(v_r_sprite_half_width),
+.v_r_sprite_start_x(v_r_sprite_start_x),
+.v_r_sprite_end_x(v_r_sprite_end_x),
+.v_r_sprite_distance(v_r_sprite_distance),
+
+
+        .v_wall_X_calc_y(v_wall_X_calc_y),
+        .v_wall_X_calc_x(v_wall_X_calc_x)
 
 
 

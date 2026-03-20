@@ -56,7 +56,7 @@ parameter lookup_f_bits = 9
     );
     
     
-    reg [17:0] recip_lookup [0:1023];
+    reg [17:0] recip_lookup [0:4095];
    
     
     initial $readmemh("delta_lut.mem", recip_lookup);
